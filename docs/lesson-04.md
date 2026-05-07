@@ -19,9 +19,9 @@ npm install @dnd-kit/sortable @dnd-kit/utilities
 `items` に現在の順序を表す id 配列を渡す。
 
 ```tsx
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 
-<DndContext onDragEnd={handleDragEnd}>
+;<DndContext onDragEnd={handleDragEnd}>
   <SortableContext
     items={items.map((item) => item.id)}
     strategy={verticalListSortingStrategy}
@@ -35,22 +35,22 @@ import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 
 **ソートストラテジー:**
 
-| ストラテジー | 用途 |
-|---|---|
-| `verticalListSortingStrategy` | 縦方向リスト |
-| `horizontalListSortingStrategy` | 横方向リスト |
-| `rectSortingStrategy` | グリッド（Lesson 05 で扱う） |
-| `rectSwappingStrategy` | 位置を交換（ギャップなし） |
+| ストラテジー                    | 用途                         |
+| ------------------------------- | ---------------------------- |
+| `verticalListSortingStrategy`   | 縦方向リスト                 |
+| `horizontalListSortingStrategy` | 横方向リスト                 |
+| `rectSortingStrategy`           | グリッド（Lesson 05 で扱う） |
+| `rectSwappingStrategy`          | 位置を交換（ギャップなし）   |
 
 ### 2. useSortable
 
 `useDraggable` + `useDroppable` を内包したソート専用フック。
 
 ```tsx
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 
-type SortableItemProps = { id: string; label: string };
+type SortableItemProps = { id: string; label: string }
 
 function SortableItem({ id, label }: SortableItemProps) {
   const {
@@ -60,41 +60,42 @@ function SortableItem({ id, label }: SortableItemProps) {
     transform,
     transition,
     isDragging,
-  } = useSortable({ id });
+  } = useSortable({ id })
 
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.4 : 1,
-  };
+  }
 
   return (
     <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
       {label}
     </div>
-  );
+  )
 }
 ```
 
 `useDraggable` との主な違い：
+
 - `transition` が追加される（他のアイテムがスライドする際のアニメーション）
 - `CSS.Transform.toString` を使う（`Translate` ではなく `Transform`）
 
 ### 3. arrayMove で状態を更新
 
 ```tsx
-import { arrayMove } from '@dnd-kit/sortable';
-import type { DragEndEvent } from '@dnd-kit/core';
+import { arrayMove } from '@dnd-kit/sortable'
+import type { DragEndEvent } from '@dnd-kit/core'
 
 function handleDragEnd(event: DragEndEvent) {
-  const { active, over } = event;
-  if (!over || active.id === over.id) return;
+  const { active, over } = event
+  if (!over || active.id === over.id) return
 
   setItems((prev) => {
-    const oldIndex = prev.findIndex((item) => item.id === active.id);
-    const newIndex = prev.findIndex((item) => item.id === over.id);
-    return arrayMove(prev, oldIndex, newIndex);
-  });
+    const oldIndex = prev.findIndex((item) => item.id === active.id)
+    const newIndex = prev.findIndex((item) => item.id === over.id)
+    return arrayMove(prev, oldIndex, newIndex)
+  })
 }
 ```
 
@@ -123,12 +124,12 @@ function SortableItem({ id, label }: SortableItemProps) {
 
 ## Step 構成（ページ内）
 
-| Step | 内容 |
-|---|---|
+| Step   | 内容                                                           |
+| ------ | -------------------------------------------------------------- |
 | Step 1 | 最小構成のソータブルリスト（アイテム全体をハンドルとして使用） |
-| Step 2 | `transition` アニメーションの有無を比較 |
-| Step 3 | ドラッグハンドルアイコンを分離して実装 |
-| Step 4 | DragOverlay を組み合わせてプレビューを表示 |
+| Step 2 | `transition` アニメーションの有無を比較                        |
+| Step 3 | ドラッグハンドルアイコンを分離して実装                         |
+| Step 4 | DragOverlay を組み合わせてプレビューを表示                     |
 
 ## 完成イメージ
 
@@ -251,10 +252,14 @@ export default function Page() {
   const sensors = useSensors(
     useSensor(MouseSensor),
     useSensor(TouchSensor),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
   )
 
-  const activeItem = activeId ? items.find(item => item.id === activeId) ?? null : null
+  const activeItem = activeId
+    ? (items.find((item) => item.id === activeId) ?? null)
+    : null
 
   function handleDragStart({ active }: DragStartEvent) {
     setActiveId(active.id as string)
@@ -263,9 +268,9 @@ export default function Page() {
   function handleDragEnd({ active, over }: DragEndEvent) {
     setActiveId(null)
     if (!over || active.id === over.id) return
-    setItems(prev => {
-      const oldIndex = prev.findIndex(item => item.id === active.id)
-      const newIndex = prev.findIndex(item => item.id === over.id)
+    setItems((prev) => {
+      const oldIndex = prev.findIndex((item) => item.id === active.id)
+      const newIndex = prev.findIndex((item) => item.id === over.id)
       return arrayMove(prev, oldIndex, newIndex)
     })
   }
@@ -280,11 +285,11 @@ export default function Page() {
       <div style={{ padding: '2rem', maxWidth: 400 }}>
         <h2>タスクリスト</h2>
         <SortableContext
-          items={items.map(item => item.id)}
+          items={items.map((item) => item.id)}
           strategy={verticalListSortingStrategy}
         >
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {items.map(item => (
+            {items.map((item) => (
               <SortableItem key={item.id} id={item.id} label={item.label} />
             ))}
           </div>
