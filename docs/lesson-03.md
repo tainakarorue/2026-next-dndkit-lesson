@@ -23,11 +23,11 @@ npm install @dnd-kit/core
 - **ドロップ時にアニメーション**を付けられる
 
 ```tsx
-import { DndContext, DragOverlay } from '@dnd-kit/core';
-import { useState } from 'react';
+import { DndContext, DragOverlay } from '@dnd-kit/core'
+import { useState } from 'react'
 
 export default function Page() {
-  const [activeId, setActiveId] = useState<string | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(null)
 
   return (
     <DndContext
@@ -40,7 +40,7 @@ export default function Page() {
         {activeId ? <OverlayCard id={activeId} /> : null}
       </DragOverlay>
     </DndContext>
-  );
+  )
 }
 ```
 
@@ -77,10 +77,10 @@ import { defaultDropAnimation, DragOverlay } from '@dnd-kit/core';
 DragOverlay を使う場合、`useDraggable` 側のスタイルは「元の場所に ghost を残す」用途になる。
 
 ```tsx
-type DraggableItemProps = { id: string; label: string };
+type DraggableItemProps = { id: string; label: string }
 
 function DraggableItem({ id, label }: DraggableItemProps) {
-  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id });
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id })
 
   return (
     <div
@@ -88,24 +88,26 @@ function DraggableItem({ id, label }: DraggableItemProps) {
       {...listeners}
       {...attributes}
       style={{
-        opacity: isDragging ? 0.3 : 1,   // ドラッグ中は薄く表示（ghost）
+        opacity: isDragging ? 0.3 : 1, // ドラッグ中は薄く表示（ghost）
         // transform は不要 — DragOverlay が動く
       }}
     >
       {label}
     </div>
-  );
+  )
 }
 
 // オーバーレイ用コンポーネント（transform なし、見た目だけ）
-type OverlayCardProps = { label: string };
+type OverlayCardProps = { label: string }
 
 function OverlayCard({ label }: OverlayCardProps) {
   return (
-    <div style={{ boxShadow: '0 8px 24px rgba(0,0,0,0.2)', cursor: 'grabbing' }}>
+    <div
+      style={{ boxShadow: '0 8px 24px rgba(0,0,0,0.2)', cursor: 'grabbing' }}
+    >
       {label}
     </div>
-  );
+  )
 }
 ```
 
@@ -128,10 +130,10 @@ onDragStart={({ active }) => {
 
 ## Step 構成（ページ内）
 
-| Step | 内容 |
-|---|---|
-| Step 1 | DragOverlay なし ／ ありの見た目の違いを横並びで比較 |
-| Step 2 | `dropAnimation` を無効 / デフォルト / カスタムで切り替える |
+| Step   | 内容                                                             |
+| ------ | ---------------------------------------------------------------- |
+| Step 1 | DragOverlay なし ／ ありの見た目の違いを横並びで比較             |
+| Step 2 | `dropAnimation` を無効 / デフォルト / カスタムで切り替える       |
 | Step 3 | `active.data.current` を使ってオーバーレイに元カードの情報を反映 |
 
 ## 完成イメージ
@@ -217,7 +219,11 @@ function OverlayCard({ label }: OverlayCardProps) {
   )
 }
 
-type DroppableZoneProps = { id: string; label: string; children: React.ReactNode }
+type DroppableZoneProps = {
+  id: string
+  label: string
+  children: React.ReactNode
+}
 
 function DroppableZone({ id, label, children }: DroppableZoneProps) {
   const { setNodeRef, isOver } = useDroppable({ id })
@@ -234,7 +240,9 @@ function DroppableZone({ id, label, children }: DroppableZoneProps) {
       }}
     >
       <h3 style={{ margin: '0 0 8px' }}>{label}</h3>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>{children}</div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {children}
+      </div>
     </div>
   )
 }
@@ -247,7 +255,9 @@ export default function Page() {
   })
   const [activeId, setActiveId] = useState<ItemId | null>(null)
 
-  const activeItem = activeId ? ITEMS.find(item => item.id === activeId) ?? null : null
+  const activeItem = activeId
+    ? (ITEMS.find((item) => item.id === activeId) ?? null)
+    : null
 
   function handleDragStart({ active }: DragStartEvent) {
     setActiveId(active.id as ItemId)
@@ -256,10 +266,10 @@ export default function Page() {
   function handleDragEnd({ active, over }: DragEndEvent) {
     setActiveId(null)
     if (!over) return
-    setItemZones(prev => ({ ...prev, [active.id]: over.id as ZoneId }))
+    setItemZones((prev) => ({ ...prev, [active.id]: over.id as ZoneId }))
   }
 
-  const unassigned = ITEMS.filter(item => itemZones[item.id] === null)
+  const unassigned = ITEMS.filter((item) => itemZones[item.id] === null)
 
   return (
     <DndContext
@@ -268,18 +278,26 @@ export default function Page() {
       onDragCancel={() => setActiveId(null)}
     >
       <div style={{ display: 'flex', gap: '2rem', padding: '2rem' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+        <div
+          style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}
+        >
           <h2>Items</h2>
-          {unassigned.map(item => (
+          {unassigned.map((item) => (
             <DraggableItem key={item.id} id={item.id} label={item.label} />
           ))}
         </div>
         <div style={{ display: 'flex', gap: '1rem' }}>
-          {ZONES.map(zone => (
+          {ZONES.map((zone) => (
             <DroppableZone key={zone.id} id={zone.id} label={zone.label}>
-              {ITEMS.filter(item => itemZones[item.id] === zone.id).map(item => (
-                <DraggableItem key={item.id} id={item.id} label={item.label} />
-              ))}
+              {ITEMS.filter((item) => itemZones[item.id] === zone.id).map(
+                (item) => (
+                  <DraggableItem
+                    key={item.id}
+                    id={item.id}
+                    label={item.label}
+                  />
+                ),
+              )}
             </DroppableZone>
           ))}
         </div>
