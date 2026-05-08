@@ -25,7 +25,6 @@ export const SortableItem = ({ id, label }: Props) => {
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.4 : 1,
   }
 
   return (
@@ -34,6 +33,7 @@ export const SortableItem = ({ id, label }: Props) => {
       style={style}
       {...listeners}
       {...attributes}
+      suppressHydrationWarning
       className={cn(
         'w-full flex flex-col items-center justify-center bg-accent rounded-md p-8',
         isDragging ? 'opacity-30 cursor-grabbing' : 'opacity-100 cursor-grab',

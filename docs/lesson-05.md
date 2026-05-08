@@ -19,9 +19,9 @@ npm install @dnd-kit/sortable @dnd-kit/utilities
 要素の矩形（rect）情報をもとにドロップ先を判定する。
 
 ```tsx
-import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
+import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable'
 
-<SortableContext items={ids} strategy={rectSortingStrategy}>
+;<SortableContext items={ids} strategy={rectSortingStrategy}>
   <div
     style={{
       display: 'grid',
@@ -44,14 +44,20 @@ import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
 グリッドセルのサイズを固定しておくと見た目が安定する。
 
 ```tsx
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 
-type SortableGridItemProps = { id: string };
+type SortableGridItemProps = { id: string }
 
 function SortableGridItem({ id }: SortableGridItemProps) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
-    useSortable({ id });
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id })
 
   return (
     <div
@@ -59,7 +65,7 @@ function SortableGridItem({ id }: SortableGridItemProps) {
       style={{
         transform: CSS.Transform.toString(transform),
         transition,
-        aspectRatio: '1 / 1',           // 正方形
+        aspectRatio: '1 / 1', // 正方形
         opacity: isDragging ? 0.4 : 1,
         cursor: 'grab',
       }}
@@ -68,7 +74,7 @@ function SortableGridItem({ id }: SortableGridItemProps) {
     >
       {id}
     </div>
-  );
+  )
 }
 ```
 
@@ -112,12 +118,12 @@ CSS Grid の `auto-fill` / `auto-fit` と組み合わせても動作する。
 
 ## Step 構成（ページ内）
 
-| Step | 内容 |
-|---|---|
-| Step 1 | 固定 3 列グリッドでの並び替え |
-| Step 2 | DragOverlay を追加してドラッグ中の表示を改善 |
+| Step   | 内容                                                             |
+| ------ | ---------------------------------------------------------------- |
+| Step 1 | 固定 3 列グリッドでの並び替え                                    |
+| Step 2 | DragOverlay を追加してドラッグ中の表示を改善                     |
 | Step 3 | グリッドの列数をコントロールで変更し、ストラテジーへの影響を確認 |
-| Step 4 | レスポンシブ（`auto-fill`）グリッドで動作確認 |
+| Step 4 | レスポンシブ（`auto-fill`）グリッドで動作確認                    |
 
 ## 完成イメージ
 
@@ -160,8 +166,15 @@ import { CSS } from '@dnd-kit/utilities'
 type Item = { id: string; color: string }
 
 const COLORS = [
-  '#ffd6d6', '#ffecd6', '#fffbd6', '#d6ffd6',
-  '#d6f0ff', '#e8d6ff', '#ffd6f0', '#d6fff0', '#f0f0f0',
+  '#ffd6d6',
+  '#ffecd6',
+  '#fffbd6',
+  '#d6ffd6',
+  '#d6f0ff',
+  '#e8d6ff',
+  '#ffd6f0',
+  '#d6fff0',
+  '#f0f0f0',
 ]
 
 const initialItems: Item[] = COLORS.map((color, i) => ({
@@ -172,8 +185,14 @@ const initialItems: Item[] = COLORS.map((color, i) => ({
 type SortableGridItemProps = { id: string; color: string }
 
 function SortableGridItem({ id, color }: SortableGridItemProps) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
-    useSortable({ id })
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id })
 
   return (
     <div
@@ -230,10 +249,14 @@ export default function Page() {
 
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 4 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 5 } }),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 150, tolerance: 5 },
+    }),
   )
 
-  const activeItem = activeId ? items.find(item => item.id === activeId) ?? null : null
+  const activeItem = activeId
+    ? (items.find((item) => item.id === activeId) ?? null)
+    : null
 
   function handleDragStart({ active }: DragStartEvent) {
     setActiveId(active.id as string)
@@ -242,9 +265,9 @@ export default function Page() {
   function handleDragEnd({ active, over }: DragEndEvent) {
     setActiveId(null)
     if (!over || active.id === over.id) return
-    setItems(prev => {
-      const oldIndex = prev.findIndex(item => item.id === active.id)
-      const newIndex = prev.findIndex(item => item.id === over.id)
+    setItems((prev) => {
+      const oldIndex = prev.findIndex((item) => item.id === active.id)
+      const newIndex = prev.findIndex((item) => item.id === over.id)
       return arrayMove(prev, oldIndex, newIndex)
     })
   }
@@ -258,7 +281,10 @@ export default function Page() {
     >
       <div style={{ padding: '2rem' }}>
         <h2>グリッド並び替え</h2>
-        <SortableContext items={items.map(item => item.id)} strategy={rectSortingStrategy}>
+        <SortableContext
+          items={items.map((item) => item.id)}
+          strategy={rectSortingStrategy}
+        >
           <div
             style={{
               display: 'grid',
@@ -266,14 +292,16 @@ export default function Page() {
               gap: 16,
             }}
           >
-            {items.map(item => (
+            {items.map((item) => (
               <SortableGridItem key={item.id} id={item.id} color={item.color} />
             ))}
           </div>
         </SortableContext>
       </div>
       <DragOverlay>
-        {activeItem ? <OverlayItem id={activeItem.id} color={activeItem.color} /> : null}
+        {activeItem ? (
+          <OverlayItem id={activeItem.id} color={activeItem.color} />
+        ) : null}
       </DragOverlay>
     </DndContext>
   )
