@@ -25,8 +25,8 @@ import {
   TouchSensor,
   useSensor,
   useSensors,
-} from '@dnd-kit/core';
-import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
+} from '@dnd-kit/core'
+import { sortableKeyboardCoordinates } from '@dnd-kit/sortable'
 
 export default function Page() {
   const sensors = useSensors(
@@ -35,24 +35,20 @@ export default function Page() {
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates, // ソータブルリスト向けの座標計算
     }),
-  );
+  )
 
-  return (
-    <DndContext sensors={sensors}>
-      {/* ... */}
-    </DndContext>
-  );
+  return <DndContext sensors={sensors}>{/* ... */}</DndContext>
 }
 ```
 
 **キーボード操作のデフォルト動作:**
 
-| キー | 動作 |
-|---|---|
-| `Space` / `Enter` | ドラッグ開始 / ドロップ |
-| `↑` `↓` `←` `→` | ドラッグ中の移動 |
-| `Escape` | ドラッグキャンセル |
-| `Tab` | フォーカス移動（ドラッグ中は無効） |
+| キー              | 動作                               |
+| ----------------- | ---------------------------------- |
+| `Space` / `Enter` | ドラッグ開始 / ドロップ            |
+| `↑` `↓` `←` `→`   | ドラッグ中の移動                   |
+| `Escape`          | ドラッグキャンセル                 |
+| `Tab`             | フォーカス移動（ドラッグ中は無効） |
 
 `sortableKeyboardCoordinates` を使うと矢印キーで隣のアイテムへ移動できる。
 
@@ -61,12 +57,10 @@ export default function Page() {
 `useDraggable` の `attributes` には以下が含まれる：
 
 ```html
-role="button"
-tabIndex="0"
-aria-disabled="false"
-aria-pressed="false"   <!-- ドラッグ中は true -->
-aria-roledescription="draggable"
-aria-describedby="dnd-live-region"  <!-- スクリーンリーダー向けの説明要素 -->
+role="button" tabIndex="0" aria-disabled="false" aria-pressed="false"
+<!-- ドラッグ中は true -->
+aria-roledescription="draggable" aria-describedby="dnd-live-region"
+<!-- スクリーンリーダー向けの説明要素 -->
 ```
 
 これらは `{...attributes}` で自動的に DOM に付与される。
@@ -116,7 +110,7 @@ const { attributes } = useDraggable({
   attributes: {
     roleDescription: 'ソート可能なアイテム',
   },
-});
+})
 ```
 
 ### 5. ハイコントラスト・視覚的フィードバック
@@ -125,13 +119,13 @@ const { attributes } = useDraggable({
 
 ```css
 /* outline を消さない */
-[role="button"]:focus-visible {
+[role='button']:focus-visible {
   outline: 2px solid #0066cc;
   outline-offset: 2px;
 }
 
 /* ドラッグ中の視覚的状態 */
-[aria-pressed="true"] {
+[aria-pressed='true'] {
   background: #e3f2fd;
   box-shadow: 0 0 0 2px #0066cc;
 }
@@ -139,11 +133,11 @@ const { attributes } = useDraggable({
 
 ## Step 構成（ページ内）
 
-| Step | 内容 |
-|---|---|
-| Step 1 | `KeyboardSensor` を追加してキーボード操作を確認 |
-| Step 2 | 日本語の ARIA アナウンス文言を設定 |
-| Step 3 | フォーカスリングのスタイルを整備 |
+| Step   | 内容                                                      |
+| ------ | --------------------------------------------------------- |
+| Step 1 | `KeyboardSensor` を追加してキーボード操作を確認           |
+| Step 2 | 日本語の ARIA アナウンス文言を設定                        |
+| Step 3 | フォーカスリングのスタイルを整備                          |
 | Step 4 | スクリーンリーダー（NVDA / JAWS）でのアナウンス内容を確認 |
 
 ## 完成イメージ
@@ -197,8 +191,14 @@ const initialItems: Item[] = [
 type SortableItemProps = { id: string; label: string }
 
 function SortableItem({ id, label }: SortableItemProps) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
-    useSortable({ id })
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id })
   return (
     <div
       ref={setNodeRef}
@@ -232,9 +232,9 @@ export default function Page() {
 
   function handleDragEnd({ active, over }: DragEndEvent) {
     if (!over || active.id === over.id) return
-    setItems(prev => {
-      const oldIndex = prev.findIndex(item => item.id === active.id)
-      const newIndex = prev.findIndex(item => item.id === over.id)
+    setItems((prev) => {
+      const oldIndex = prev.findIndex((item) => item.id === active.id)
+      const newIndex = prev.findIndex((item) => item.id === over.id)
       return arrayMove(prev, oldIndex, newIndex)
     })
   }
@@ -265,7 +265,8 @@ export default function Page() {
           },
         },
         screenReaderInstructions: {
-          draggable: 'このアイテムはドラッグ可能です。Space または Enter でドラッグを開始してください。',
+          draggable:
+            'このアイテムはドラッグ可能です。Space または Enter でドラッグを開始してください。',
         },
       }}
     >
@@ -275,11 +276,11 @@ export default function Page() {
           Tab でフォーカス → Space でドラッグ開始 → ↑↓ で移動 → Space でドロップ
         </p>
         <SortableContext
-          items={items.map(item => item.id)}
+          items={items.map((item) => item.id)}
           strategy={verticalListSortingStrategy}
         >
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {items.map(item => (
+            {items.map((item) => (
               <SortableItem key={item.id} id={item.id} label={item.label} />
             ))}
           </div>
